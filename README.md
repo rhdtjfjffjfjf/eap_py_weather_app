@@ -1,9 +1,10 @@
 import folium
+from folium.plugins import FloatImage, Fullscreen
 
 
 #Ο παρακατω κοδικας βαζει ορια για να μην  διαφευγει ο Χαρτης απο την Ελλάδα.
-min_lon, max_lon = 19, 28#Ορισμος γεωγραφικου μηκους (δυση)(ανατολη)
-min_lat, max_lat = 34, 41#Ορισμός γεωγραφικου πλάτους (βοράς)(νότος)
+min_lon, max_lon = 19, 32#Ορισμος γεωγραφικου μηκους (δυση)(ανατολη)
+min_lat, max_lat = 34, 43#Ορισμός γεωγραφικου πλάτους (βοράς)(νότος)
 
 map = folium.Map(max_bounds=True,#θετει αυτα τα ορια ως τα όρια του χαρτη,δεν μπορει δηλαδή να ξεφυγει απο αυτα τα όρια
                  location=[38.5, 23.7],#Αυτο ειναι το κεντρικο σημειο του χάρτη
@@ -12,6 +13,9 @@ map = folium.Map(max_bounds=True,#θετει αυτα τα ορια ως τα ό
                  max_lat=max_lat,
                  min_lon=min_lon,
                  max_lon=max_lon)
+
+
+
 #Με την CircleMarker την χρησημοποιουμε για να προσθεσουμε ενα κυκλικο marker το πρωτο ορισμα μεσα σε αυτην δεχεται
 # της συντεταγμενες, ενω με το δευτερο χρησιμοποιειται οταν το ποντικι παω πανω στο κυκλικο marker να μας εμφανησει
 # το σημειο που βρισκεται και στο τελος με την μεθοδο .add_to() το αποθηκευουμε στον χαρτη μας.
@@ -71,14 +75,34 @@ cities_greece = {
     'Γρεβενά': [40.08425, 21.42763],
     'Άγιος Νικόλαος': [35.1901, 25.7162],
     'Ερμούπολη': [37.45, 24.9],
-    'Αργοστόλι': [38.17568, 20.48744],
+    'Αργοστόλι': [38.17568, 20.48744]
+
 }
-#Προσθετει marker για καθε μια πολη μαζι με το ονομα της .
-for city, location in cities_greece.items():
-    folium.Marker(location=location, popup=city, icon=folium.Icon(color='blue')).add_to(map)
+
+
+
+folium.plugins.Fullscreen(position='topright', title='Full Screene', title_cancel='Exit', force_separate_button=True).add_to(map)  #Βαζει την επιλογη για full screene
+
+
+
+url = (
+    "https://raw.githubusercontent.com/ocefpaf/secoora_assets_map/"
+    "a250729bbcf2ddd12f46912d36c33f7539131bec/secoora_icons/rose.png"
+)
+FloatImage(url, bottom=0, left=0).add_to(map) # Προσθετει μια πιξιδα στον χαρτη κατω αριστερα
 
 
 
 
-#Αποθηκευει σε ενα αρχειο τον Χαρτη
-map.save("map.html")
+try:                                                #Προσθετει marker για καθε μια πολη μαζι με το ονομα της .
+    for city, location in cities_greece.items():
+      folium.Marker(location=location, tooltip='Click to see the weather', popup=city, icon=folium.Icon(icon="cloud")).add_to(map)
+except Exception as e:
+    print(f'Σφαλμα: {e}')
+
+
+try:
+  map.save("map.html") #Αποθηκευει σε ενα αρχειο τον Χαρτη
+except Exception as e:
+   print('Σφαλμα: {}'.format(e))
+
